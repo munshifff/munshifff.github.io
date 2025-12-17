@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Munshif Muhajireen - AI/ML Engineer</title>
+    <title>Munshif Muhajireen - AI/ML Engineer & Full-Stack Developer</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -518,7 +518,384 @@
             font-size: 0.9rem;
         }
 
-        /* Mobile Menu Toggle */
+        /* Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+        }
+
+        .chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(0, 255, 136, 0.6);
+        }
+
+        .chatbot-toggle svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--bg-primary);
+        }
+
+        .chatbot-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: #ff3366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .chatbot-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 380px;
+            height: 550px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+
+        .chatbot-window.active {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .chatbot-header {
+            padding: 1.5rem;
+            background: var(--gradient-2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .chatbot-header-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chatbot-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: 'Syne', sans-serif;
+            color: var(--bg-primary);
+        }
+
+        .chatbot-header h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .chatbot-status {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .chatbot-close {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .chatbot-close:hover {
+            opacity: 1;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chatbot-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-track {
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .chatbot-messages::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 3px;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.8rem;
+            animation: messageIn 0.3s ease;
+        }
+
+        @keyframes messageIn {
+            from {
+                transform: translateY(10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--bg-primary);
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--gradient-2);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-content {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            color: var(--text-primary);
+        }
+
+        .message.user .message-content {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: var(--text-primary);
+        }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .quick-reply {
+            padding: 0.5rem 1rem;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .quick-reply:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chatbot-input-area {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(0, 255, 136, 0.2);
+            display: flex;
+            gap: 0.8rem;
+            background: rgba(10, 14, 39, 0.5);
+        }
+
+        .chatbot-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            background: rgba(20, 25, 55, 0.8);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 25px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .chatbot-send {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-send:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .chatbot-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chatbot-send svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--bg-primary);
+        }
+
+        /* Mobile adjustments for chatbot */
+        @media (max-width: 480px) {
+            .chatbot-window {
+                width: calc(100vw - 30px);
+                height: calc(100vh - 150px);
+                right: 15px;
+                bottom: 90px;
+            }
+
+            .chatbot-toggle {
+                width: 55px;
+                height: 55px;
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .chatbot-container {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
         .menu-toggle {
             display: none;
             flex-direction: column;
@@ -826,16 +1203,17 @@
 
     <section class="hero">
         <div class="hero-content">
-            <div class="hero-tag">AI/ML Engineer</div>
+            <div class="hero-tag">AI/ML Engineer • Full-Stack Developer</div>
             <h1>Hi, I'm <span class="gradient-text">Munshif Muhajireen</span></h1>
             <p>
-                I build intelligent systems that solve real-world problems. Specializing in machine learning, 
-                deep learning, and generative AI with production deployment experience. Currently pursuing 
-                BSc Computer Science with AI at NIBM (Coventry University).
+                I build intelligent systems and modern web applications that solve real-world problems. 
+                Specializing in machine learning, deep learning, generative AI, and full-stack web development 
+                with the MERN stack. From AI models to production-ready web apps, I bring ideas to life with code.
             </p>
             <div class="cta-buttons">
                 <a href="#projects" class="btn btn-primary">View My Work</a>
                 <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                <a href="https://drive.google.com/file/d/14yXtRr7fuoGskl8ZoBnIguDao-_5aXnI/view?usp=drive_link" class="btn btn-secondary">My Resume</a>
             </div>
         </div>
     </section>
@@ -845,7 +1223,7 @@
             <div class="section-tag">Technical Arsenal</div>
             <h2 class="section-title">Skills & Technologies</h2>
             <p class="section-description">
-                A comprehensive toolkit for building end-to-end AI/ML solutions
+                Full-stack expertise spanning AI/ML, web development, and cloud deployment
             </p>
         </div>
         <div class="skills-grid">
@@ -856,6 +1234,8 @@
                     <span class="skill-tag">Java</span>
                     <span class="skill-tag">SQL</span>
                     <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">HTML5</span>
+                    <span class="skill-tag">CSS3</span>
                 </div>
             </div>
             <div class="skill-category">
@@ -866,6 +1246,17 @@
                     <span class="skill-tag">Scikit-learn</span>
                     <span class="skill-tag">OpenCV</span>
                     <span class="skill-tag">LangChain</span>
+                    <span class="skill-tag">PyTorch</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <h3>Web Development</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">React.js</span>
+                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">Express.js</span>
+                    <span class="skill-tag">Tailwind CSS</span>
+                    <span class="skill-tag">REST APIs</span>
                 </div>
             </div>
             <div class="skill-category">
@@ -883,18 +1274,22 @@
                 <h3>Backend & MLOps</h3>
                 <div class="skill-tags">
                     <span class="skill-tag">Flask</span>
-                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">Django</span>
+                    <span class="skill-tag">FastAPI</span>
                     <span class="skill-tag">AWS</span>
+                    <span class="skill-tag">Docker</span>
                     <span class="skill-tag">CI/CD</span>
                 </div>
             </div>
             <div class="skill-category">
                 <h3>Databases & Tools</h3>
                 <div class="skill-tags">
-                    <span class="skill-tag">MySQL</span>
                     <span class="skill-tag">MongoDB</span>
+                    <span class="skill-tag">MySQL</span>
+                    <span class="skill-tag">PostgreSQL</span>
                     <span class="skill-tag">Git</span>
                     <span class="skill-tag">GitHub</span>
+                    <span class="skill-tag">Postman</span>
                 </div>
             </div>
         </div>
@@ -905,7 +1300,7 @@
             <div class="section-tag">Featured Work</div>
             <h2 class="section-title">Projects</h2>
             <p class="section-description">
-                Production-ready AI/ML solutions showcasing end-to-end development capabilities
+                Full-stack applications spanning AI/ML, web development, and data analytics
             </p>
         </div>
         <div class="projects-grid">
@@ -1063,11 +1458,269 @@
     </section>
 
     <footer>
-        <p>© 2025 Munshif Muhajireen. Designed & Built with passion for AI/ML.</p>
-        <p style="margin-top: 0.5rem; opacity: 0.6;">Colombo, Sri Lanka</p>
+        <p>© 2025 Munshif Muhajireen</p>
+        <p style="margin-top: 0.5rem; opacity: 0.6;">Sri Lanka</p>
     </footer>
 
+    <!-- Chatbot Widget -->
+    <div class="chatbot-container">
+        <button class="chatbot-toggle" id="chatbotToggle">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+                <circle cx="8" cy="10" r="1.5"/>
+                <circle cx="12" cy="10" r="1.5"/>
+                <circle cx="16" cy="10" r="1.5"/>
+            </svg>
+            <span class="chatbot-badge">AI</span>
+        </button>
+
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-header-info">
+                    <div class="chatbot-avatar">MM</div>
+                    <div>
+                        <h3>AI Assistant</h3>
+                        <div class="chatbot-status">
+                            <span class="status-dot"></span>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="chatbot-close" id="chatbotClose">×</button>
+            </div>
+
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot">
+                    <div class="message-avatar">MM</div>
+                    <div class="message-content">
+                        👋 Hi! I'm Munshif's AI assistant. I can help you learn more about his skills, projects, and experience. What would you like to know?
+                        <div class="quick-replies">
+                            <button class="quick-reply" data-message="Tell me about your AI/ML projects">AI/ML Projects</button>
+                            <button class="quick-reply" data-message="What are your technical skills?">Skills</button>
+                            <button class="quick-reply" data-message="How can I contact you?">Contact</button>
+                            <button class="quick-reply" data-message="Show me your certifications">Certifications</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chatbot-input-area">
+                <input 
+                    type="text" 
+                    class="chatbot-input" 
+                    id="chatbotInput" 
+                    placeholder="Ask me anything..."
+                    autocomplete="off"
+                />
+                <button class="chatbot-send" id="chatbotSend">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Chatbot functionality
+        const chatbotToggle = document.getElementById('chatbotToggle');
+        const chatbotWindow = document.getElementById('chatbotWindow');
+        const chatbotClose = document.getElementById('chatbotClose');
+        const chatbotMessages = document.getElementById('chatbotMessages');
+        const chatbotInput = document.getElementById('chatbotInput');
+        const chatbotSend = document.getElementById('chatbotSend');
+
+        // Toggle chatbot
+        chatbotToggle.addEventListener('click', () => {
+            chatbotWindow.classList.toggle('active');
+        });
+
+        chatbotClose.addEventListener('click', () => {
+            chatbotWindow.classList.remove('active');
+        });
+
+        // Knowledge base
+        const knowledgeBase = {
+            skills: {
+                keywords: ['skill', 'skills', 'technology', 'technologies', 'know', 'expertise', 'stack', 'tech'],
+                response: `I have expertise in:
+
+🤖 <strong>AI/ML:</strong> TensorFlow, Keras, Scikit-learn, OpenCV, LangChain, PyTorch
+
+💻 <strong>Web Dev:</strong> React.js, Node.js, Express.js, Tailwind CSS, Bootstrap
+
+📊 <strong>Data Science:</strong> Pandas, NumPy, Matplotlib, Seaborn, Power BI
+
+🔧 <strong>Languages:</strong> Python, Java, JavaScript, TypeScript, SQL
+
+Would you like to know about any specific area?`
+            },
+            projects: {
+                keywords: ['project', 'projects', 'work', 'portfolio', 'built', 'created', 'ai', 'ml', 'machine learning'],
+                response: `Here are my key projects:
+
+🔹 <strong>Medical Chatbot with RAG</strong> - AI-powered healthcare assistant using LangChain and Pinecone
+
+🔹 <strong>Bitcoin Price Prediction</strong> - LSTM neural network for cryptocurrency forecasting
+
+🔹 <strong>Book-Genre Clustering</strong> - Unsupervised ML for automatic categorization
+
+🔹 <strong>Banking Analytics Dashboard</strong> - Full-stack data analytics solution
+
+Check out the Projects section for more details!`
+            },
+            contact: {
+                keywords: ['contact', 'email', 'reach', 'connect', 'hire', 'availability', 'available'],
+                response: `You can reach me through:
+
+📧 <strong>Email:</strong> munshifmuhajireen@gmail.com
+📱 <strong>Phone:</strong> +94 74 217 6017
+💼 <strong>LinkedIn:</strong> linkedin.com/in/munshifmuhajireen
+💻 <strong>GitHub:</strong> github.com/munshifff
+
+I'm currently open to opportunities! Feel free to reach out.`
+            },
+            certifications: {
+                keywords: ['certification', 'certifications', 'certificate', 'course', 'courses', 'learning', 'certified'],
+                response: `My certifications include:
+
+✅ Introduction to Large Language Models (Google Cloud)
+✅ Neural Networks and Deep Learning (DeepLearning.AI)
+✅ Computer Vision and Image Processing (IBM)
+✅ Python Programming (University of Moratuwa)
+✅ Responsive Web Design (freeCodeCamp)
+
+View the Certifications section for verification links!`
+            },
+            education: {
+                keywords: ['education', 'study', 'studying', 'university', 'degree', 'college', 'school'],
+                response: `I'm currently pursuing:
+
+🎓 <strong>BSc (Hons) Computer Science with AI</strong>
+📍 National Institute of Business Management (Coventry University)
+📅 2023 - 2026
+
+I completed my A/Levels in Physical Science at Zahira College Matale (2020-2022).`
+            },
+            experience: {
+                keywords: ['experience', 'work experience', 'job', 'internship', 'worked'],
+                response: `I have hands-on experience with:
+
+• Building production-ready AI/ML models
+• Full-stack web application development
+• Cloud deployment on AWS
+• Data analytics and visualization
+• RESTful API development
+
+Check out my projects to see these skills in action!`
+            },
+            greeting: {
+                keywords: ['hi', 'hello', 'hey', 'greetings', 'good morning', 'good afternoon'],
+                response: `Hello! 👋 Nice to meet you! I'm here to help you learn more about Munshif's skills and experience. What would you like to know?`
+            }
+        };
+
+        // Bot responses
+        function getBotResponse(userMessage) {
+            const messageLower = userMessage.toLowerCase();
+            
+            // Check each category
+            for (const [category, data] of Object.entries(knowledgeBase)) {
+                if (data.keywords.some(keyword => messageLower.includes(keyword))) {
+                    return data.response;
+                }
+            }
+            
+            // Default response
+            return `I can help you with information about:
+
+• Skills & Technologies
+• Projects & Portfolio
+• Education & Certifications
+• Contact Information
+
+What would you like to know more about?`;
+        }
+
+        // Add message to chat
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = isUser ? 'YOU' : 'MM';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentDiv);
+            
+            chatbotMessages.appendChild(messageDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTyping() {
+            const typing = document.createElement('div');
+            typing.className = 'typing-indicator active';
+            typing.id = 'typingIndicator';
+            typing.innerHTML = `
+                <div class="typing-dots">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                </div>
+            `;
+            chatbotMessages.appendChild(typing);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        // Send message
+        function sendMessage() {
+            const message = chatbotInput.value.trim();
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, true);
+            chatbotInput.value = '';
+            
+            // Show typing
+            showTyping();
+            
+            // Simulate bot thinking time
+            setTimeout(() => {
+                hideTyping();
+                const response = getBotResponse(message);
+                addMessage(response, false);
+            }, 1000 + Math.random() * 1000);
+        }
+
+        // Event listeners
+        chatbotSend.addEventListener('click', sendMessage);
+        
+        chatbotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Quick replies
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('quick-reply')) {
+                const message = e.target.getAttribute('data-message');
+                chatbotInput.value = message;
+                sendMessage();
+            }
+        });
+
         // Mobile menu toggle
         const menuToggle = document.getElementById('menuToggle');
         const nav = document.getElementById('nav');
